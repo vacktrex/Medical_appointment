@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>My Appointments</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        main {
+            padding: 40px 60px;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 10px 14px;
+            font-size: 14px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            background: #fff;
+            width: 48%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f3f5;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #e7f3ff;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .status-pending { color: orange; font-weight: bold; }
+        .status-confirmed { color: green; font-weight: bold; }
+        .status-rejected { color: red; font-weight: bold; }
+
+        .no-results {
+            margin-top: 40px;
+            font-size: 17px;
+            color: #6c757d;
+        }
+
+        .btn {
+            margin-top: 40px;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #084298;
+        }
+    </style>
+
+    <script>
+        function filterAppointments() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#appointmentsTable tbody tr');
+            rows.forEach(row => {
+                const doctor = row.querySelector('.doctor')?.textContent.toLowerCase() || '';
+                const reason = row.querySelector('.reason')?.textContent.toLowerCase() || '';
+                row.style.display = (doctor.includes(keyword) || reason.includes(keyword)) ? '' : 'none';
+            });
+        }
+    </script>
+</h:head>
+
+<h:body>
+    <header>My Appointments</header>
+
+    <main>
+        <h:form>
+            <h:messages globalOnly="true" infoStyle="color:green;" errorStyle="color:red;" />
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="Search doctor or reason..." onkeyup="filterAppointments()" />
+
+                <h:selectOneMenu value="#{appointmentBean.statusFilter}">
+                    <f:selectItem itemLabel="All" itemValue="" />
+                    <f:selectItem itemLabel="Pending" itemValue="pending" />
+                    <f:selectItem itemLabel="Confirmed" itemValue="confirmed" />
+                    <f:selectItem itemLabel="Rejected" itemValue="rejected" />
+                    <f:ajax listener="#{appointmentBean.filterByStatus}" render="@form" />
+                </h:selectOneMenu>
+            </div>
+
+            <h:dataTable id="appointmentsTable"
+                         value="#{appointmentBean.myAppointments}"
+                         var="appt"
+                         rendered="#{not empty appointmentBean.myAppointments}">
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    #{appt.appointmentId}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Doctor</f:facet>
+                    <span class="doctor">#{appt.doctorId.fullName}</span>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Date &amp; Time</f:facet>
+                    <h:outputText value="#{appt.dateTime}">
+                        <f:convertDateTime pattern="yyyy-MM-dd HH:mm"/>
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Reason</f:facet>
+                    <span class="reason">#{appt.reason}</span>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Status</f:facet>
+                    <span class="status-#{appt.status}">#{appt.status}</span>
+                </h:column>
+            </h:dataTable>
+
+            <h:panelGroup rendered="#{empty appointmentBean.myAppointments}">
+                <div class="no-results">You have no appointments scheduled yet.</div>
+            </h:panelGroup>
+
+            <h:commandButton value="Back to Dashboard"
+                             action="/patient/dashboard.xhtml?faces-redirect=true"
+                             immediate="true"
+                             styleClass="btn" />
+        </h:form>
+    </main>
+</h:body>
+</html>

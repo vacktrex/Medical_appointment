@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Manage Bills</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+        }
+
+        .wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #0E7490;
+            margin-bottom: 24px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input, .filter-bar select {
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+
+        .filter-bar button {
+            background-color: #0E7490;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .filter-bar button:hover {
+            background-color: #0b5f72;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+        }
+
+        table.data-table thead {
+            background-color: #e0f2fe;
+        }
+
+        table.data-table th, table.data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-unpaid {
+            color: red;
+            font-weight: bold;
+        }
+
+        .small-button {
+            padding: 5px 10px;
+            font-size: 0.85em;
+            background-color: #0E7490;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .small-button:hover {
+            background-color: #0b5f72;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            background-color: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .back-button:hover {
+            background-color: #4b5563;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="wrapper">
+        <h1>All Bills</h1>
+
+        <h:form>
+            <div class="filter-bar">
+                <h:inputText value="#{billingBean.searchPatient}" />
+                <h:selectOneMenu value="#{billingBean.statusFilter}">
+                    <f:selectItem itemLabel="All Status" itemValue=""/>
+                    <f:selectItem itemLabel="Paid" itemValue="paid"/>
+                    <f:selectItem itemLabel="Unpaid" itemValue="unpaid"/>
+                </h:selectOneMenu>
+                <h:inputText value="#{billingBean.startDate}"  >
+                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                </h:inputText>
+                <h:inputText value="#{billingBean.endDate}" >
+                    <f:convertDateTime pattern="yyyy-MM-dd"/>
+                </h:inputText>
+                <h:commandButton value="Filter" action="#{billingBean.applyFilters}" />
+                <h:commandButton value="Export CSV" action="#{billingBean.exportCsv}" />
+                <h:commandButton value="Export PDF" action="#{billingBean.exportPdf}" styleClass="command-button" />
+            </div>
+
+            <h:messages globalOnly="true" infoStyle="color: green;" errorStyle="color: red;" />
+
+            <h:dataTable value="#{billingBean.filteredBills}" var="bill" styleClass="data-table"
+                         headerClass="data-table-header" rowClasses="data-table-row-odd,data-table-row-even">
+                <h:column>
+                    <f:facet name="header">Bill ID</f:facet>
+                    #{bill.billId}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Patient Name</f:facet>
+                    #{bill.patientId.fullName}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Doctor Name</f:facet>
+                    #{bill.doctorId.fullName}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Amount</f:facet>
+                    <h:outputText value="#{bill.amount}">
+                        <f:convertNumber type="currency" currencySymbol="RM" />
+                    </h:outputText>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Date Issued</f:facet>
+                    <h:outputText value="#{bill.dateIssued}">
+                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                    </h:outputText>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Description</f:facet>
+                    #{bill.description}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Status</f:facet>
+                    <h:outputText value="#{bill.status}" 
+                                  styleClass="#{bill.status eq 'paid' ? 'status-paid' : 'status-unpaid'}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Action</f:facet>
+                    <h:commandLink value="Mark as Paid" action="#{billingBean.markBillAsPaid(bill)}"
+                                   rendered="#{bill.status eq 'unpaid'}" styleClass="small-button">
+                        <f:ajax render="@form :messages" />
+                    </h:commandLink>
+                    <h:outputText value="Paid" rendered="#{bill.status eq 'paid'}" styleClass="status-paid"/>
+                </h:column>
+            </h:dataTable>
+
+            <br/>
+            <h:commandButton value="Back to Dashboard"
+                             action="/doctor/dashboard.xhtml?faces-redirect=true"
+                             immediate="true"
+                             styleClass="back-button"/>
+        </h:form>
+    </div>
+</h:body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Pending Appointment Requests</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #ffffff);
+            color: #1f2937;
+        }
+
+        .wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #0E7490;
+            margin-bottom: 20px;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        table.data-table th, table.data-table td {
+            border: 1px solid #d1d5db;
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        table.data-table th {
+            background-color: #e2e8f0;
+            color: #1f2937;
+            font-weight: bold;
+        }
+
+        table.data-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        .command-button {
+            padding: 8px 14px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .green-button {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .green-button:hover {
+            background-color: #059669;
+        }
+
+        .red-button {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .red-button:hover {
+            background-color: #dc2626;
+        }
+
+        .back-button {
+            background-color: #0E7490;
+            color: white;
+            padding: 10px 18px;
+            font-size: 15px;
+        }
+
+        .back-button:hover {
+            background-color: #0b556b;
+        }
+
+        .no-data {
+            font-size: 16px;
+            color: #6b7280;
+            margin-top: 20px;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="wrapper">
+        <h1>Pending Appointment Requests</h1>
+        <h:messages globalOnly="true" infoStyle="color: green;" errorStyle="color: red;" />
+
+        <h:form>
+            <h:dataTable value="#{doctorAppointmentBean.pendingAppointmentRequests}" var="appt"
+                         styleClass="data-table"
+                         rendered="#{not empty doctorAppointmentBean.pendingAppointmentRequests}">
+
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    #{appt.appointmentId}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Patient</f:facet>
+                    #{appt.patientId.fullName}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Date &amp; Time</f:facet>
+                    <h:outputText value="#{appt.dateTime}">
+                        <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Reason</f:facet>
+                    #{appt.reason}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Status</f:facet>
+                    <h:outputText value="#{appt.status}" style="font-weight: bold; color: orange;" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Actions</f:facet>
+                    <h:commandButton value="Accept" action="#{doctorAppointmentBean.acceptAppointment(appt)}"
+                                     styleClass="command-button green-button">
+                        <f:ajax render="@form" execute="@form" />
+                    </h:commandButton>
+
+                    <h:commandButton value="Decline" action="#{doctorAppointmentBean.declineAppointment(appt)}"
+                                     styleClass="command-button red-button">
+                        <f:ajax render="@form" execute="@form" />
+                    </h:commandButton>
+                </h:column>
+            </h:dataTable>
+
+            <h:panelGroup rendered="#{empty doctorAppointmentBean.pendingAppointmentRequests}">
+                <div class="no-data">You currently have no pending appointment requests.</div>
+            </h:panelGroup>
+
+            <br />
+            <h:commandButton value="Back to Dashboard" action="/doctor/dashboard.xhtml?faces-redirect=true"
+                             immediate="true" styleClass="command-button back-button" />
+        </h:form>
+    </div>
+</h:body>
+</html>

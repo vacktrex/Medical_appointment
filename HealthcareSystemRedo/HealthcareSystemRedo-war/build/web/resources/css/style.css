@@ -1,0 +1,131 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Jun 13, 2025, 3:35:15 AM
+    Author     : user
+*/
+
+/* General body and container styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* For viewPatients */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px; /* For patientDetails to allow scrolling */
+    box-sizing: border-box; /* For patientDetails */
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 900px;
+    text-align: center; /* For viewPatients */
+    text-align: left; /* For patientDetails */
+}
+
+h1, h2, h3 {
+    color: #333;
+    margin-bottom: 30px; /* Adjust for h1 */
+    margin-bottom: 20px; /* Adjust for h2, h3 */
+    text-align: center; /* For patientDetails */
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 30px 0;
+}
+
+/* Data Table Styles (for both pages) */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+.data-table-header {
+    background-color: #f2f2f2;
+    font-weight: bold; /* Added for clarity */
+}
+.data-table-row-odd {
+    background-color: #f9f9f9;
+}
+.data-table-row-even {
+    background-color: #ffffff;
+}
+.data-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Form Control Styles (for patientDetails) */
+.form-control {
+    width: calc(100% - 22px); /* Adjust for padding and border */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Ensures padding and border don't increase width */
+}
+.form-control:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+}
+
+/* Panel Grid (for form layout in patientDetails) */
+.h\:panelGrid { /* This CSS selector is for the JSF component's default class, might need adjustment */
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+}
+.h\:panelGrid td {
+    padding: 8px;
+    vertical-align: top;
+}
+.h\:outputLabel {
+    font-weight: bold;
+}
+
+/* Command Button Styles (for both pages) */
+.command-button { /* Applied via styleClass in xhtml */
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-right: 10px; /* Space between buttons */
+    transition: background-color 0.2s ease;
+}
+.command-button:hover {
+    background-color: #0056b3;
+}
+
+/* For direct h:commandButton selector, if needed (less specific) */
+.h\:commandButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+}
+.h\:commandButton:hover {
+    background-color: #0056b3;
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Create New Bill</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(to right, #f4f8fc, #ffffff);
+            color: #1f2937;
+        }
+
+        .wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #0E7490;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px 16px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid #d1d5db;
+            background-color: #ffffff;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: #0E7490;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .buttons {
+            grid-column: span 2;
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .buttons h\:commandButton {
+            background-color: #0E7490;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .buttons h\:commandButton:hover {
+            background-color: #0b5f72;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="wrapper">
+        <h1>Create New Bill</h1>
+        <h:form>
+            <h:outputLabel value="Patient:" for="patientId" />
+            <h:selectOneMenu id="patientId" value="#{billingBean.patientUserId}" required="true">
+                <f:selectItems value="#{billingBean.patients}" var="patient"
+                               itemValue="#{patient.userId}"
+                               itemLabel="#{patient.fullName} (#{patient.username})"/>
+            </h:selectOneMenu>
+
+            <h:outputLabel value="Amount:" for="amount" />
+            <h:inputText id="amount" value="#{billingBean.amount}" required="true" />
+
+            <h:outputLabel value="Date Issued:" for="dateIssued" />
+            <h:inputText id="dateIssued" value="#{billingBean.dateIssued}" required="true">
+                <f:convertDateTime pattern="yyyy-MM-dd" />
+            </h:inputText>
+
+            <h:outputLabel value="Description:" for="description" />
+            <h:inputTextarea id="description" value="#{billingBean.description}" />
+
+            <div class="buttons">
+                <h:commandButton value="Create Bill" action="#{billingBean.createBill()}" />
+                <h:commandButton value="Back to Dashboard" action="/doctor/dashboard.xhtml?faces-redirect=true" immediate="true"/>
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>

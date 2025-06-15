@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Request Appointment</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        h1 {
+            font-size: 26px;
+            text-transform: uppercase;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 10px;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-grid .full-span {
+            grid-column: 1 / span 2;
+        }
+
+        .form-buttons {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .btn {
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1565c0;
+        }
+
+        .btn.secondary {
+            background-color: #6c757d;
+        }
+
+        .btn.secondary:hover {
+            background-color: #495057;
+        }
+
+        .ui-selectonemenu, .ui-inputfield, .ui-calendar {
+            width: 100% !important;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="page-wrapper">
+        <h1>Request New Appointment</h1>
+
+        <h:messages globalOnly="true" infoStyle="color:green;" errorStyle="color:red;" />
+
+        <h:form>
+            <div class="form-grid">
+
+                <!-- Doctor Selection -->
+                <h:outputLabel for="doctor" value="Preferred Doctor:" />
+                <h:selectOneMenu id="doctor" value="#{appointmentBean.selectedDoctorId}" required="true"
+                                 requiredMessage="Please select a doctor.">
+                    <f:selectItem itemLabel="-- Select Doctor --" itemValue="#{null}" />
+                    <f:selectItems value="#{appointmentBean.doctors}" var="doc"
+                                   itemLabel="#{doc.fullName} (#{doc.username})" itemValue="#{doc.userId}" />
+                </h:selectOneMenu>
+
+                <!-- Date Time -->
+                <h:outputLabel for="dateTimeCalendar" value="Appointment Date &amp; Time:"/>
+                <p:calendar id="dateTimeCalendar" value="#{appointmentBean.dateTime}"
+                            pattern="yyyy-MM-dd HH:mm" mask="true" showOn="button"
+                            required="true" requiredMessage="Appointment Date and Time is required." />
+
+                <!-- Reason -->
+                <h:outputLabel for="reason" value="Reason for Appointment:" styleClass="full-span"/>
+                <h:inputTextarea id="reason" value="#{appointmentBean.reason}" rows="5" styleClass="full-span"
+                                 required="true" requiredMessage="Reason is required." />
+            </div>
+
+            <!-- Buttons -->
+            <div class="form-buttons">
+                <h:commandButton value="Submit Request" action="#{appointmentBean.requestAppointment()}" styleClass="btn" />
+                <h:button value="Back to Dashboard" outcome="/patient/dashboard.xhtml" styleClass="btn secondary" />
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>

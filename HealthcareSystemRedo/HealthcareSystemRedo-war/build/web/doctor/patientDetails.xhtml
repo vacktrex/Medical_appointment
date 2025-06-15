@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Patient Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .main-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+        }
+
+        .profile-section {
+            background: #f0f4f8;
+            padding: 40px 60px;
+            transition: background 0.5s ease;
+        }
+
+        .history-section {
+            background: #ffffff;
+            padding: 40px 60px;
+            transition: background 0.5s ease;
+        }
+
+        .header {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0E7490;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 12px 16px;
+            align-items: center;
+        }
+
+        .form-control {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #0E7490;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+        .button-primary, .button-secondary {
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .button-primary {
+            background: #0E7490;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #0b5e73;
+        }
+
+        .button-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .button-secondary:hover {
+            background: #4b5563;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .toggle-area {
+            margin-top: 20px;
+        }
+    </style>
+</h:head>
+
+<f:metadata>
+    <f:viewParam name="patientId" value="#{doctorPatientViewBean.patientIdParam}" converter="javax.faces.Integer" />
+    <f:event type="preRenderView" listener="#{doctorPatientViewBean.loadPatientDetails}"/>
+</f:metadata>
+
+<h:body>
+    <div class="main-section">
+        <!-- Patient Profile Section -->
+        <div class="profile-section">
+            <div class="header">Patient - <h:outputText value="#{doctorPatientViewBean.selectedPatient.users.fullName}"/></div>
+            <h:messages globalOnly="true" style="color:blue;"/>
+
+            <h:form>
+                <div class="form-grid">
+                    <h:outputLabel value="Patient ID:"/>
+                    <h:outputText value="#{doctorPatientViewBean.selectedPatient.patientId}"/>
+
+                    <h:outputLabel value="Username:"/>
+                    <h:inputText value="#{doctorPatientViewBean.selectedPatient.users.username}" styleClass="form-control"/>
+
+                    <h:outputLabel value="Full Name:"/>
+                    <h:inputText value="#{doctorPatientViewBean.selectedPatient.users.fullName}" styleClass="form-control"/>
+
+                    <h:outputLabel value="Email:"/>
+                    <h:inputText value="#{doctorPatientViewBean.selectedPatient.users.email}" styleClass="form-control"/>
+
+                    <h:outputLabel value="Age:"/>
+                    <h:inputText value="#{doctorPatientViewBean.selectedPatient.age}" styleClass="form-control"/>
+
+                    <h:outputLabel value="Gender:"/>
+                    <h:inputText value="#{doctorPatientViewBean.selectedPatient.gender}" styleClass="form-control"/>
+
+                    <h:outputLabel value="Contact Info:"/>
+                    <h:inputTextarea value="#{doctorPatientViewBean.selectedPatient.contactInfo}" rows="3" styleClass="form-control"/>
+                </div>
+
+                <div class="button-group">
+                    <h:commandButton value="Update Profile" action="#{doctorPatientViewBean.updatePatientProfile}" styleClass="button-primary"/>
+                    <h:commandButton value="Back to List" action="/doctor/viewPatients.xhtml?faces-redirect=true" immediate="true" styleClass="button-secondary"/>
+                </div>
+            </h:form>
+        </div>
+
+        <!-- Medical History Section -->
+        <div class="history-section">
+            <div class="header">Medical History</div>
+            <h:form>
+                <h:panelGroup rendered="#{not empty doctorPatientViewBean.patientMedicalHistory}">
+                    <h:dataTable value="#{doctorPatientViewBean.patientMedicalHistory}" var="record" styleClass="data-table">
+                        <h:column>
+                            <f:facet name="header">Date</f:facet>
+                            <h:outputText value="#{record.date}">
+                                <f:convertDateTime pattern="yyyy-MM-dd"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Symptoms</f:facet>
+                            #{record.symptoms}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Diagnosis</f:facet>
+                            #{record.diagnosis}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Notes</f:facet>
+                            #{record.notes}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Doctor</f:facet>
+                            #{record.doctorId.fullName}
+                        </h:column>
+                    </h:dataTable>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{empty doctorPatientViewBean.patientMedicalHistory}">
+                    <p>No medical history records found.</p>
+                </h:panelGroup>
+
+                <div class="toggle-area">
+                    <h:commandButton value="Add New Entry" onclick="document.getElementById('addForm').style.display='block'; return false;" styleClass="button-primary"/>
+                </div>
+
+                <div id="addForm" style="display:none; margin-top: 20px;">
+                    <h3>New Entry</h3>
+                    <div class="form-grid">
+                        <h:outputLabel value="Date:"/>
+                        <h:inputText value="#{doctorPatientViewBean.newDateIssued}" styleClass="form-control">
+                            <f:convertDateTime pattern="yyyy-MM-dd" type="date"/>
+                        </h:inputText>
+
+                        <h:outputLabel value="Symptoms:"/>
+                        <h:inputTextarea value="#{doctorPatientViewBean.newSymptoms}" rows="3" styleClass="form-control"/>
+
+                        <h:outputLabel value="Diagnosis:"/>
+                        <h:inputTextarea value="#{doctorPatientViewBean.newDiagnosis}" rows="3" styleClass="form-control"/>
+
+                        <h:outputLabel value="Notes:"/>
+                        <h:inputTextarea value="#{doctorPatientViewBean.newNotes}" rows="3" styleClass="form-control"/>
+                    </div>
+                    <h:commandButton value="Submit Entry" action="#{doctorPatientViewBean.addNewMedicalHistory}" styleClass="button-primary"/>
+                </div>
+            </h:form>
+        </div>
+    </div>
+</h:body>
+</html>
+

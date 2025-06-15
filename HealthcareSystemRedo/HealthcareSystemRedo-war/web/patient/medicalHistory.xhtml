@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Medical History</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        header {
+            background-color: #343a40;
+            padding: 20px 40px;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        main {
+            padding: 40px 60px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 18px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #f1f3f5;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #e9f5ff;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .no-records {
+            margin-top: 40px;
+            font-size: 17px;
+            color: #6c757d;
+        }
+
+        .btn {
+            margin-top: 40px;
+            background-color: #0d6efd;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #084298;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <header>
+        Medical History for #{patientMedicalHistoryBean.loggedInPatientUser.fullName}
+    </header>
+
+    <main>
+        <h:form>
+            <h:messages globalOnly="true" infoStyle="color: green;" errorStyle="color: red;" />
+
+            <h:dataTable value="#{patientMedicalHistoryBean.medicalHistoryRecords}" var="record"
+                         rendered="#{not empty patientMedicalHistoryBean.medicalHistoryRecords}">
+
+                <h:column>
+                    <f:facet name="header">ID</f:facet>
+                    #{record.historyId}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Date</f:facet>
+                    <h:outputText value="#{record.date}">
+                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Symptoms</f:facet>
+                    #{record.symptoms}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Diagnosis</f:facet>
+                    #{record.diagnosis}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Notes</f:facet>
+                    #{record.notes}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Doctor</f:facet>
+                    #{record.doctorId.fullName}
+                </h:column>
+            </h:dataTable>
+
+            <h:panelGroup rendered="#{empty patientMedicalHistoryBean.medicalHistoryRecords}">
+                <div class="no-records">No medical records found for your profile.</div>
+            </h:panelGroup>
+
+            <h:commandButton value="Back to Dashboard"
+                             action="/patient/dashboard.xhtml?faces-redirect=true"
+                             immediate="true"
+                             styleClass="btn"/>
+        </h:form>
+    </main>
+</h:body>
+</html>
+

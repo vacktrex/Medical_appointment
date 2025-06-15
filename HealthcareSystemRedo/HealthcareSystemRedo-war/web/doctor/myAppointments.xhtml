@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>My Appointments</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #0E7490;
+            margin-bottom: 20px;
+        }
+
+        .search-filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-filter-container input,
+        .search-filter-container select {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: #e0f7fa;
+        }
+
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .status-confirmed {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-cancelled {
+            color: red;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            background: #0E7490;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #0b5e73;
+        }
+
+        @media (max-width: 768px) {
+            .search-filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="page-title">All My Appointments</div>
+    <h:messages globalOnly="true" infoStyle="color: green;" errorStyle="color: red;"/>
+
+    <h:form>
+        <div class="search-filter-container">
+            <h:inputText value="#{doctorAppointmentBean.searchKeyword}" />
+            <h:selectOneMenu value="#{doctorAppointmentBean.statusFilter}">
+                <f:selectItem itemLabel="All Statuses" itemValue=""/>
+                <f:selectItem itemLabel="Pending" itemValue="pending"/>
+                <f:selectItem itemLabel="Confirmed" itemValue="confirmed"/>
+                <f:selectItem itemLabel="Cancelled" itemValue="cancelled"/>
+            </h:selectOneMenu>
+            <h:commandButton value="Filter" action="#{doctorAppointmentBean.filterAppointments}"/>
+        </div>
+
+        <h:dataTable value="#{doctorAppointmentBean.filteredAppointments}" var="appt" styleClass="data-table"
+                     headerClass="data-table-header" rowClasses="data-table-row-odd,data-table-row-even"
+                     rendered="#{not empty doctorAppointmentBean.filteredAppointments}">
+            <h:column>
+                <f:facet name="header">ID</f:facet>
+                #{appt.appointmentId}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Patient</f:facet>
+                #{appt.patientId.fullName}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Date &amp; Time</f:facet>
+                <h:outputText value="#{appt.dateTime}">
+                    <f:convertDateTime pattern="yyyy-MM-dd HH:mm"/>
+                </h:outputText>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Reason</f:facet>
+                #{appt.reason}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Status</f:facet>
+                <h:outputText value="#{appt.status}" styleClass="#{appt.status eq 'pending' ? 'status-pending' : (appt.status eq 'confirmed' ? 'status-confirmed' : 'status-cancelled')}"/>
+            </h:column>
+        </h:dataTable>
+
+        <h:panelGroup rendered="#{empty doctorAppointmentBean.filteredAppointments}">
+            <p>You have no appointments scheduled yet.</p>
+        </h:panelGroup>
+
+        <h:commandButton value="Back to Dashboard" action="/doctor/dashboard.xhtml?faces-redirect=true" immediate="true" styleClass="back-btn"/>
+    </h:form>
+</h:body>
+</html>

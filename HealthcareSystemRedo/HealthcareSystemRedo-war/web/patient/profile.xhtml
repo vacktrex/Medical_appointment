@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Patient Profile</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+    <div class="container">
+        <h1>Your Profile</h1>
+        <!-- This ensures the bean gets initialized -->
+        <h:outputText value="#{patientProfileBean.init()}" rendered="false"/>
+
+        <h:form>
+            <h:messages globalOnly="true" style="color:blue;" />
+            <h:panelGrid columns="3" cellpadding="5">
+
+                <h:outputLabel for="username" value="Username:" />
+                <h:inputText id="username" value="#{patientProfileBean.user.username}" disabled="true" />
+                <h:message for="username" style="color:red" />
+
+                <h:outputLabel for="fullName" value="Full Name:" />
+                <h:inputText id="fullName" value="#{patientProfileBean.user.fullName}" required="true" />
+                <h:message for="fullName" style="color:red" />
+
+                <h:outputLabel for="email" value="Email:" />
+                <h:inputText id="email" value="#{patientProfileBean.user.email}" required="true">
+                    <f:validateRegex pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$" />
+                </h:inputText>
+                <h:message for="email" style="color:red" />
+
+                <h:outputLabel for="contactInfo" value="Contact Info:" />
+                <h:inputText id="contactInfo" value="#{patientProfileBean.user.contactInfo}" />
+                <h:message for="contactInfo" style="color:red" />
+
+                <h:outputLabel for="address" value="Address:" />
+                <h:inputText id="address" value="#{patientProfileBean.user.address}" />
+                <h:message for="address" style="color:red" />
+
+                <h:outputLabel for="age" value="Age:" />
+                <h:inputText id="age" value="#{patientProfileBean.user.age}" />
+                <h:message for="age" style="color:red" />
+
+                <h:outputLabel for="gender" value="Gender:" />
+                <h:selectOneMenu id="gender" value="#{patientProfileBean.user.gender}">
+                    <f:selectItem itemLabel="Select" itemValue="" />
+                    <f:selectItem itemLabel="Male" itemValue="Male" />
+                    <f:selectItem itemLabel="Female" itemValue="Female" />
+                    <f:selectItem itemLabel="Other" itemValue="Other" />
+                </h:selectOneMenu>
+                <h:message for="gender" style="color:red" />
+            </h:panelGrid>
+
+            <br />
+            <h:commandButton value="Update Profile" action="#{patientProfileBean.updateProfile()}" styleClass="command-button" />
+            <h:commandButton value="Back to Dashboard" action="dashboard.xhtml?faces-redirect=true" immediate="true" styleClass="command-button" />
+        </h:form>
+    </div>
+
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 100%; max-width: 800px; text-align: center; }
+        h1 { color: #333; margin-bottom: 30px; }
+        .h\:panelGrid { width: 100%; margin: 0 auto; text-align: left; }
+        .h\:panelGrid td { padding: 8px; vertical-align: top; }
+        .h\:outputLabel { font-weight: bold; }
+        .h\:inputText, .h\:selectOneMenu { width: 90%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .command-button { background-color: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px; }
+        .command-button:hover { background-color: #0056b3; }
+        .h\:message { font-size: 0.9em; }
+    </style>
+</h:body>
+</html>

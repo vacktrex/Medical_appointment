@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>My Billing Records</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        header {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        main {
+            padding: 40px 60px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f3f5;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #e7f3ff;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .no-results {
+            margin-top: 40px;
+            font-size: 17px;
+            color: #6c757d;
+        }
+
+        .btn {
+            margin-top: 40px;
+            background-color: #0d6efd;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #084298;
+        }
+
+        .status-paid { color: green; font-weight: bold; }
+        .status-unpaid { color: orange; font-weight: bold; }
+        .status-overdue { color: red; font-weight: bold; }
+    </style>
+</h:head>
+
+<h:body>
+    <header>Billing Records for #{patientBillingRecordsBean.loggedInPatientUser.fullName}</header>
+
+    <main>
+        <h:form>
+            <h:messages globalOnly="true" infoStyle="color:green;" errorStyle="color:red;" />
+
+            <h:dataTable value="#{patientBillingRecordsBean.billingRecords}"
+                         var="record"
+                         rendered="#{not empty patientBillingRecordsBean.billingRecords}">
+                <h:column>
+                    <f:facet name="header">Bill ID</f:facet>
+                    #{record.billId}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Date Issued</f:facet>
+                    <h:outputText value="#{record.dateIssued}">
+                        <f:convertDateTime pattern="yyyy-MM-dd"/>
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Description</f:facet>
+                    #{record.description}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Amount</f:facet>
+                    <h:outputText value="#{record.amount}">
+                        <f:convertNumber type="currency" currencySymbol="RM"/>
+                    </h:outputText>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Status</f:facet>
+                    <span class="status-#{record.status.toLowerCase()}">#{record.status}</span>
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Doctor</f:facet>
+                    #{record.doctorId.fullName}
+                </h:column>
+            </h:dataTable>
+
+            <h:panelGroup rendered="#{empty patientBillingRecordsBean.billingRecords}">
+                <div class="no-results">No billing records found for your profile.</div>
+            </h:panelGroup>
+
+            <h:commandButton value="Back to Dashboard"
+                             action="/patient/dashboard.xhtml?faces-redirect=true"
+                             immediate="true"
+                             styleClass="btn" />
+        </h:form>
+    </main>
+</h:body>
+</html>
